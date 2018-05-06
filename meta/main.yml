@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Jared Hocutt
+  description: Installs Private Internet Access VPN profiles in NetworkManager.
+
+  license: BSD
+
+  min_ansible_version: 1.9
+
+  platforms:
+  - name: Fedora
+    versions:
+    - 27

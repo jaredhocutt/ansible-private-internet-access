@@ -1,0 +1,35 @@
+---
+
+- name: Install required packages
+  dnf:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - NetworkManager-openvpn
+    - NetworkManager-openvpn-gnome
+  become: yes
+
+- name: Copy Private Internet Access CA cert
+  get_url:
+    url: https://www.privateinternetaccess.com/openvpn/ca.rsa.4096.crt
+    dest: /etc/openvpn/pia-ca.rsa.4096.crt
+    owner: root
+    group: root
+    mode: 0600
+  become: yes
+
+- name: Install VPN profiles
+  template:
+    src: "{{ item }}"
+    dest: /etc/NetworkManager/system-connections/
+    owner: root
+    group: root
+    mode: 0600
+  with_fileglob: "{{ role_path }}/templates/*"
+  register: install_pia_vpn_profiles
+  become: yes
+
+- name: Reload NetworkManager
+  command: nmcli connection reload
+  when: install_pia_vpn_profiles.changed
+  become: yes
